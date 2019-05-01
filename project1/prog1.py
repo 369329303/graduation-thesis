@@ -1,3 +1,5 @@
+#!/usr/local/bin/python3
+import sys
 import math
 
 
@@ -10,32 +12,30 @@ def distance(contents, i, j):
         pow(float(li[1]) - float(lj[1]), 2))
 
 
+def within_range(contents, i, limit):
+    in_range = list()
+    for j in range(0, len(contents), 2):
+        if abs(float(contents[j].split()[0]) - float(contents[i].split()[0])) > limit \
+           or abs(float(contents[j].split()[1]) - float(contents[i].split()[0])) > limit:
+            continue
+        if pow(float(contents[j].split()[0]), 2) + pow(float(contents[j].split()[1]), 2) \
+           > pow(limit, 2) \
+           or pow(float(contents[j].split()[1]), 2) + pow(float(contents[j].split()[2]), 2) \
+           > pow(limit, 2):
+            continue
+        d = distance(contents, i, j)
+        in_range.append([j, d, float(contents[j].split()[2])])
+    return in_range
+
+
 # calculate z value using idw method
 def idw(contents, i, limit):
-    in_range = list()
-    j = i - 1
-    while True:
-        if j >= 0:
-            d = distance(contents, i, j)
-            if d <= limit:
-                in_range.append([j, d, float(contents[j].split()[2])])
-                j -= 2
-        else:
-            break
-    j = i + 1
-    while True:
-        if j <= len(contents):
-            d = distance(contents, i, j)
-            if d <= limit:
-                in_range.append([j, d, float(contents[j].split()[2])])
-                j += 2
-        else:
-            break
+    in_range = within_range(contents, i, limit)
     m, n = 0, 0
     for i in range(len(in_range)):
         m += 1 / in_range[i][1]
         n += in_range[i][2] / in_range[i][1]
-    return n / m
+    return n / m if m != 0 else contents[i-1].split()[2]
 
 
 # calculate z value using linear interpolation version 2 method
@@ -61,7 +61,7 @@ def liv2(contents, i, limit):
 
 
 contents = list()
-with open('test.txt', 'r') as f:
+with open('sample.txt', 'r') as f:
     for line in f:
         contents.append(line)
 
@@ -75,7 +75,7 @@ with open('f3.txt', 'w') as f3:
         else:
             f3.write(contents[i])
 
-pass
+sys.exit(1)
 # linear interpolation version 1 method
 with open('f2.txt', 'w') as f2:
     for i in range(len(contents)):
@@ -86,7 +86,7 @@ with open('f2.txt', 'w') as f2:
         else:
             f2.write(contents[i])
 
-pass
+sys.exit(1)
 # linear interpolation version 1 method
 with open('f1.txt', 'w') as f1:
     for i in range(len(contents)):
