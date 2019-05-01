@@ -57,13 +57,13 @@ def idw(contents, i, limit):
     return n / m if m != 0 else contents[i - 1].split()[2]
 
 
-if len(sys.argv) == 1:
-    print(f'Usage: {sys.argv[0]} <data.txt>')
+if len(sys.argv) != 3:
+    print(f'Usage: {sys.argv[0]} <limit> <data.txt>')
     sys.exit(1)
 
-limit = 15
+limit = float(sys.argv[1])
 contents = list()
-with open(sys.argv[1], 'r') as f:
+with open(sys.argv[2], 'r') as f:
     for line in f:
         contents.append(line)
 
@@ -79,6 +79,7 @@ with open('f1.txt', 'w') as f1:
 end = time.time()
 print(f'Time for liv1 method:\t{end-start:<20.10}s.')
 
+
 start = time.time()
 with open('f2.txt', 'w') as f2:
     for i in range(len(contents)):
@@ -90,6 +91,7 @@ with open('f2.txt', 'w') as f2:
             f2.write(contents[i])
 end = time.time()
 print(f'Time for liv2 method:\t{end-start:<20.10}s.')
+
 
 start = time.time()
 with open('f3.txt', 'w') as f3:
