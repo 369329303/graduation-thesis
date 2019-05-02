@@ -1,10 +1,28 @@
-limit = 15
+radius = 15, brute-force
 Time for liv1 method:	0.03827667236       s.
 Time for liv2 method:	138.3588037         s.
 Time for idw  method:	137.8944387         s.
 RMSE for source.txt and f1.txt is:	3.483580519558885e-05
 RMSE for source.txt and f2.txt is:	0.0012308651169108328
 RMSE for source.txt and f3.txt is:	0.001051393745398175
+
+radius = 15. kd-tree
+Time for liv1 method:	0.06382226944       s.
+Time for liv2 method:	10.659446           s.
+Time for idw  method:	10.6278863          s.
+RMSE for source.txt and f1.txt is:	3.48358052e-05
+RMSE for source.txt and f2.txt is:	0.001230865117
+RMSE for source.txt and f3.txt is:	0.001051393745
+
+
+
+
+
+
+
+
+
+
 
 
 limit 20
