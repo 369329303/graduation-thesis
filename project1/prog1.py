@@ -1,107 +1,111 @@
 import sys
 import math
 import time
-
-
-# difference between contents[i].split()[column] -
-# contents[j].split()[column]
-def diff(contents, i, j, column):
-    return float(contents[i].split()[column]) - \
-        float(contents[j].split()[column])
+import numpy as np
+from scipy import spatial
 
 
 # calculate the distance between contents[i] and contents[j]
-def distance(contents, i, j):
-    return math.sqrt(
-        pow(diff(contents, i, j, 0), 2) +
-        pow(diff(contents, i, j, 1), 2))
+def distance(i, j):
+    return math.sqrt(pow(contents[i][0]-contents[j][0], 2) +
+                     pow(contents[i][1]-contents[j][1], 2))
 
 
 # find all the points that lie in the radius of limit around point i
-def within_range(contents, i, limit):
+def within_range(tree, i, radius):
     in_range = list()
-    for j in range(0, len(contents), 2):
-        if abs(diff(contents, i, j, 0)) > limit \
-           or abs(diff(contents, i, j, 1)) > limit:
-            continue
-        if pow(diff(contents, i, j, 0), 2) + \
-           pow(diff(contents, i, j, 1), 2) > \
-           pow(limit, 2):
-            continue
-        d = distance(contents, i, j)
-        in_range.append([j, d, float(contents[j].split()[2])])
+    res = tree.query_ball_point(
+        [contents[i][0], contents[i][1]], radius)
+    for j in res:
+        d = distance(i, 2*j)
+        z = extracted_contents[j][2]
+        in_range.append([j, d, z])
     return in_range
 
 
 # calculate z value using linear interpolation version 1 method
-def liv1(contents, i):
-    previous = contents[i - 1].split()
-    next_ = contents[i + 1].split() if i + 1 < len(contents) else previous
-    return (float(previous[2]) + float(next_[2])) / 2
+def liv1(i):
+    previous = contents[i - 1]
+    next_ = contents[i + 1] if i + 1 < len(contents) else previous
+    return (previous[2] + next_[2]) / 2
 
 
 # calculate z value using linear interpolation version 2 method
-def liv2(contents, i, limit):
-    in_range = within_range(contents, i, limit)
+def liv2(i, radius):
+    in_range = within_range(tree, i, radius)
     sum_z = 0
     for record in in_range:
         sum_z += record[2]
-    return sum_z / len(in_range) if len(in_range) != 0 else contents[
-        i - 1].split()[2]
+    return sum_z / len(in_range) \
+        if len(in_range) != 0 \
+        else contents[i - 1][2]
 
 
 # calculate z value using idw method
-def idw(contents, i, limit):
-    in_range = within_range(contents, i, limit)
+def idw(i, radius):
+    in_range = within_range(tree, i, radius)
     m, n = 0, 0
     for i in range(len(in_range)):
         m += 1 / in_range[i][1]
         n += in_range[i][2] / in_range[i][1]
-    return n / m if m != 0 else contents[i - 1].split()[2]
+    return n / m if m != 0 else contents[i - 1][2]
 
 
 if len(sys.argv) != 3:
-    print(f'Usage: {sys.argv[0]} <limit> <data.txt>')
+    print(f'Usage: {sys.argv[0]} <radius> <data.txt>')
     sys.exit(1)
 
-contents = list()
-limit = float(sys.argv[1])
+radius = float(sys.argv[1])
+contents, extracted_contents = list(), list()
+flag = True
 with open(sys.argv[2], 'r') as f:
     for line in f:
-        contents.append(line)
+        sline = line.split()
+        contents.append([float(sline[0]),
+                         float(sline[1]),
+                         float(sline[2])])
+        if flag:
+            extracted_contents.append(contents[-1])
+            flag = False
+        else:
+            flag = True
 
 start = time.time()
 with open('f1.txt', 'w') as f1:
     for i in range(len(contents)):
         if i % 2:
-            cur = contents[i].split()
-            z = liv1(contents, i)
+            cur = contents[i]
+            z = liv1(i)
             f1.write(f'{cur[0]}\t{cur[1]}\t{z}\n')
         else:
-            f1.write(contents[i])
+            f1.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
 print(f'Time for liv1 method:\t{end-start:<20.10}s.')
 
 start = time.time()
 with open('f2.txt', 'w') as f2:
+    extracted_contents_array = np.array(extracted_contents)
+    tree = spatial.KDTree(extracted_contents_array[:, 0:2])
     for i in range(len(contents)):
         if i % 2:
-            cur = contents[i].split()
-            z = liv2(contents, i, limit)
+            cur = contents[i]
+            z = liv2(i, radius)
             f2.write(f'{cur[0]}\t{cur[1]}\t{z}\n')
         else:
-            f2.write(contents[i])
+            f2.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
 print(f'Time for liv2 method:\t{end-start:<20.10}s.')
 
 start = time.time()
 with open('f3.txt', 'w') as f3:
+    extracted_contents_array = np.array(extracted_contents)
+    tree = spatial.KDTree(extracted_contents_array[:, 0:2])
     for i in range(len(contents)):
         if i % 2:
-            cur = contents[i].split()
-            z = idw(contents, i, limit)
+            cur = contents[i]
+            z = idw(i, radius)
             f3.write(f'{cur[0]}\t{cur[1]}\t{z}\n')
         else:
-            f3.write(contents[i])
+            f3.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
 print(f'Time for idw  method:\t{end-start:<20.10}s.')
