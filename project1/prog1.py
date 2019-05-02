@@ -1,29 +1,32 @@
-#!/usr/local/bin/python3
 import sys
 import math
 import time
 
 
+# difference between contents[i].split()[column] -
+# contents[j].split()[column]
+def diff(contents, i, j, column):
+    return float(contents[i].split()[column]) - \
+        float(contents[j].split()[column])
+
+
 # calculate the distance between contents[i] and contents[j]
 def distance(contents, i, j):
-    li = contents[i].split()
-    lj = contents[j].split()
     return math.sqrt(
-        pow(float(li[0]) - float(lj[0]), 2) +
-        pow(float(li[1]) - float(lj[1]), 2))
+        pow(diff(contents, i, j, 0), 2) +
+        pow(diff(contents, i, j, 1), 2))
 
 
 # find all the points that lie in the radius of limit around point i
 def within_range(contents, i, limit):
     in_range = list()
     for j in range(0, len(contents), 2):
-        if abs(float(contents[j].split()[0]) - float(contents[i].split()[0])) > limit \
-           or abs(float(contents[j].split()[1]) - float(contents[i].split()[0])) > limit:
+        if abs(diff(contents, i, j, 0)) > limit \
+           or abs(diff(contents, i, j, 1)) > limit:
             continue
-        if pow(float(contents[j].split()[0]), 2) + pow(float(contents[j].split()[1]), 2) \
-           > pow(limit, 2) \
-           or pow(float(contents[j].split()[1]), 2) + pow(float(contents[j].split()[2]), 2) \
-           > pow(limit, 2):
+        if pow(diff(contents, i, j, 0), 2) + \
+           pow(diff(contents, i, j, 1), 2) > \
+           pow(limit, 2):
             continue
         d = distance(contents, i, j)
         in_range.append([j, d, float(contents[j].split()[2])])
@@ -33,7 +36,7 @@ def within_range(contents, i, limit):
 # calculate z value using linear interpolation version 1 method
 def liv1(contents, i):
     previous = contents[i - 1].split()
-    next_ = contents[i + 1].split() if i+1 < len(contents) else previous
+    next_ = contents[i + 1].split() if i + 1 < len(contents) else previous
     return (float(previous[2]) + float(next_[2])) / 2
 
 
@@ -61,8 +64,8 @@ if len(sys.argv) != 3:
     print(f'Usage: {sys.argv[0]} <limit> <data.txt>')
     sys.exit(1)
 
-limit = float(sys.argv[1])
 contents = list()
+limit = float(sys.argv[1])
 with open(sys.argv[2], 'r') as f:
     for line in f:
         contents.append(line)
@@ -79,7 +82,6 @@ with open('f1.txt', 'w') as f1:
 end = time.time()
 print(f'Time for liv1 method:\t{end-start:<20.10}s.')
 
-
 start = time.time()
 with open('f2.txt', 'w') as f2:
     for i in range(len(contents)):
@@ -91,7 +93,6 @@ with open('f2.txt', 'w') as f2:
             f2.write(contents[i])
 end = time.time()
 print(f'Time for liv2 method:\t{end-start:<20.10}s.')
-
 
 start = time.time()
 with open('f3.txt', 'w') as f3:
