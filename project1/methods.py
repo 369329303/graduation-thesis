@@ -70,8 +70,8 @@ with open(sys.argv[2], 'r') as f:
             flag = False
         else:
             flag = True
-print(f'{"Method":<10}{"Used Time/s":>20}')
-tmpfile1.write(f'{"Method":<10}{"Used Time/s":>20}\n')
+print(f'{"Method":<10}{"Used-Time/s":>20}')
+tmpfile1.write(f'{"Method":<10}{"Used-Time/s":>20}\n')
 
 start = time.time()
 with open('f1.txt', 'w') as f1:
@@ -83,8 +83,8 @@ with open('f1.txt', 'w') as f1:
         else:
             f1.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
-print(f'{"liv1":<10}{end-start:>20.10}')
-tmpfile1.write(f'{"liv1":<10}{end-start:>20.10}\n')
+print(f'{"liv1":<10}{end-start:>20.2f}')
+tmpfile1.write(f'{"liv1":<10}{end-start:>20.2f}\n')
 
 start = time.time()
 with open('f2.txt', 'w') as f2:
@@ -98,8 +98,8 @@ with open('f2.txt', 'w') as f2:
         else:
             f2.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
-print(f'{"liv2":<10}{end-start:>20.10}')
-tmpfile1.write(f'{"liv2":<10}{end-start:>20.10}\n')
+print(f'{"liv2":<10}{end-start:>20.2f}')
+tmpfile1.write(f'{"liv2":<10}{end-start:>20.2f}\n')
 
 start = time.time()
 with open('f3.txt', 'w') as f3:
@@ -113,6 +113,6 @@ with open('f3.txt', 'w') as f3:
         else:
             f3.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
-print(f'{"idw":<10}{end-start:>20.10}')
-tmpfile1.write(f'{"idw":<10}{end-start:>20.10}\n')
+print(f'{"idw":<10}{end-start:>20.2f}')
+tmpfile1.write(f'{"idw":<10}{end-start:>20.2f}\n')
 tmpfile1.close()

@@ -1,4 +1,4 @@
-Method             Used Time/s
-liv1             0.07080674171
-liv2               11.73832679
-idw                11.74665642
+Method             Used-Time/s
+liv1                      0.06
+liv2                     29.28
+idw                      28.71

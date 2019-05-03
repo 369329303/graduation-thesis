@@ -1,0 +1,4 @@
+Method         min/m               max/m              mean/m              rmse/m  gross_error_rate/%
+liv1           -3.14                6.23            -0.00054                0.16                1.18
+liv2           -2.75                1.00              -0.012                0.25                2.30
+idw            -2.20                0.84             -0.0075                0.19                2.21

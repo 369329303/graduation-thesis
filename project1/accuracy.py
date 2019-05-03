@@ -1,6 +1,5 @@
 import sys
 import math
-import statistics
 import numpy as np
 
 
@@ -23,8 +22,11 @@ if len(sys.argv) < 3:
     print(f'Usage: {sys.argv[0]} <data1.txt> <data2.txt> ...')
     sys.exit(1)
 
+tmpfile2 = open('tmpfile2.txt', 'w')
 print(f'{"Method":<10}{"min/m":>10}{"max/m":>20}{"mean/m":>20}'
       f'{"rmse/m":>20.6}{"gross_error_rate/%":>20}')
+tmpfile2.write(f'{"Method":<10}{"min/m":>10}{"max/m":>20}{"mean/m":>20}'
+               f'{"rmse/m":>20.6}{"gross_error_rate/%":>20}\n')
 methods = ["liv1", "liv2", 'idw']
 for method, fn in zip(methods, sys.argv[2:]):
     diff = diff_list(sys.argv[1], fn)
@@ -34,5 +36,7 @@ for method, fn in zip(methods, sys.argv[2:]):
     mean = diff.mean()
     rmse = math.sqrt(sum(diff**2) / diff.size)
     gross_error_rate = sum(abs(diff) > 3 * rmse) / diff.size
-    print(f'{method:<10}{min_:>10.6}{max_:>20.6}{mean:>20.6}'
-          f'{rmse:>20.6}{gross_error_rate*100:>20.6}')
+    print(f'{method:<10}{min_:>10.2f}{max_:>20.2f}{mean:>20.2}'
+          f'{rmse:>20.2f}{gross_error_rate*100:>20.2f}')
+    tmpfile2.write(f'{method:<10}{min_:>10.2f}{max_:>20.2f}{mean:>20.2}'
+                   f'{rmse:>20.2f}{gross_error_rate*100:>20.2f}\n')
