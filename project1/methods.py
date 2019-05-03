@@ -51,6 +51,31 @@ def idw(i, radius):
     return n / m if m != 0 else contents[i - 1][2]
 
 
+def idwv2(i, k=2):
+    '''
+    Find k points that nearest point i.
+    Then use IDW method to interpolate.
+    Return predicated z value of point i.
+    '''
+    res = nn(i, k)
+    m, n = 0, 0
+    for j in res:
+        m += 1 / distance(i, 2*j)
+        n += contents[2*j][2] / distance(i, 2*j)
+    return n / m if m != 0 else contents[i - 1][2]
+
+
+def nn(i, k=1):
+    '''
+    Nearest Neighbor for interpolation.
+    Return the index of nearest neighbor in the tree.
+    return (distance, index) if k == 1 else
+           ([distance1, ...], [index1, ...])
+    '''
+    res = tree.query([contents[i][0], contents[i][1]], k)
+    return res[1]
+
+
 if len(sys.argv) != 3:
     print(f'Usage: {sys.argv[0]} <radius> <data.txt>')
     sys.exit(1)
@@ -70,8 +95,8 @@ with open(sys.argv[2], 'r') as f:
             flag = False
         else:
             flag = True
-print(f'{"Method":<10}{"Used-Time/s":>20}')
-tmpfile1.write(f'{"Method":<10}{"Used-Time/s":>20}\n')
+print(f'{"Method":<10}{"Time/s":>10}')
+tmpfile1.write(f'{"Method":<10}{"Time/s":>10}\n')
 
 start = time.time()
 with open('f1.txt', 'w') as f1:
@@ -83,8 +108,8 @@ with open('f1.txt', 'w') as f1:
         else:
             f1.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
-print(f'{"liv1":<10}{end-start:>20.2f}')
-tmpfile1.write(f'{"liv1":<10}{end-start:>20.2f}\n')
+print(f'{"liv1":<10}{end-start:>10.2f}')
+tmpfile1.write(f'{"liv1":<10}{end-start:>10.2f}\n')
 
 start = time.time()
 with open('f2.txt', 'w') as f2:
@@ -98,8 +123,8 @@ with open('f2.txt', 'w') as f2:
         else:
             f2.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
-print(f'{"liv2":<10}{end-start:>20.2f}')
-tmpfile1.write(f'{"liv2":<10}{end-start:>20.2f}\n')
+print(f'{"liv2":<10}{end-start:>10.2f}')
+tmpfile1.write(f'{"liv2":<10}{end-start:>10.2f}\n')
 
 start = time.time()
 with open('f3.txt', 'w') as f3:
@@ -113,6 +138,38 @@ with open('f3.txt', 'w') as f3:
         else:
             f3.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
-print(f'{"idw":<10}{end-start:>20.2f}')
-tmpfile1.write(f'{"idw":<10}{end-start:>20.2f}\n')
+print(f'{"idw":<10}{end-start:>10.2f}')
+tmpfile1.write(f'{"idw":<10}{end-start:>10.2f}\n')
+
+start = time.time()
+with open('f4.txt', 'w') as f4:
+    extracted_contents_array = np.array(extracted_contents)
+    tree = spatial.KDTree(extracted_contents_array[:, 0:2])
+    for i in range(len(contents)):
+        if i % 2:
+            cur = contents[i]
+            z = idwv2(i, 3)
+            f4.write(f'{cur[0]}\t{cur[1]}\t{z}\n')
+        else:
+            f4.write('\t'.join(map(str, contents[i])) + '\n')
+end = time.time()
+print(f'{"idwv2":<10}{end-start:>10.2f}')
+tmpfile1.write(f'{"idwv2":<10}{end-start:>10.2f}\n')
+
+start = time.time()
+with open('f5.txt', 'w') as f5:
+    extracted_contents_array = np.array(extracted_contents)
+    tree = spatial.KDTree(extracted_contents_array[:, 0:2])
+    for i in range(len(contents)):
+        if i % 2:
+            cur = contents[i]
+            index = nn(i) * 2
+            z = contents[index][2]
+            f5.write(f'{cur[0]}\t{cur[1]}\t{z}\n')
+        else:
+            f5.write('\t'.join(map(str, contents[i])) + '\n')
+end = time.time()
+print(f'{"nn":<10}{end-start:>10.2f}')
+tmpfile1.write(f'{"nn":<10}{end-start:>10.2f}\n')
+
 tmpfile1.close()

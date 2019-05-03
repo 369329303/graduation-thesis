@@ -1,4 +1,6 @@
-Method             Used-Time/s
-liv1                      0.06
-liv2                     29.28
-idw                      28.71
+Method        Time/s
+liv1            0.06
+liv2           12.04
+idw            12.06
+idwv2           2.45
+nn              1.83
