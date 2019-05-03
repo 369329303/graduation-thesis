@@ -1,41 +1,38 @@
 import sys
 import math
+import statistics
+import numpy as np
 
 
-def accuracy(file1, file2):
-    '''
-    calculate RMSE, min_, max_, mean_ values for file1 and file2
-    - RMSE: 	Root Mean Square Error
-    - min_: 	minimum value of (z2-z1)
-    - max_: 	maximum value of (z2-z1)
-    - mean_: 	mean value of (z2-z1)
-    '''
-    count, sum_z12, sum_z12_square = 0, 0, 0
-    min_, max_, mean_ = math.inf, -math.inf, 0
+def diff_list(file1, file2):
+    '''return list of (z2-z1) for z1 in file1, z2 in file2.'''
+    count = 0
+    diff = list()
     with open(file1, 'r') as f1, \
-         open(file2, 'r') as f2:
+            open(file2, 'r') as f2:
         for line1, line2 in zip(f1, f2):
             if count % 2:
                 z1 = float(line1.split()[2])
                 z2 = float(line2.split()[2])
-                sum_z12 += z2 - z1
-                sum_z12_square += pow(z2 - z1, 2)
-                if z2 - z1 < min_:
-                    min_ = z2 - z1
-                if z2 - z1 > max_:
-                    max_ = z2 - z1
+                diff.append(z2 - z1)
             count += 1
-    mean_ = sum_z12 / count
-    rmse = math.sqrt(sum_z12_square / count)
-    return [rmse, min_, max_, mean_]
+    return diff
 
 
 if len(sys.argv) < 3:
     print(f'Usage: {sys.argv[0]} <data1.txt> <data2.txt> ...')
     sys.exit(1)
 
-print(f'{"Method":^10}{"RMSE":^20}{"min":^20}{"max":^20}{"mean":^20}')
+print(f'{"Method":<10}{"min/m":>10}{"max/m":>20}{"mean/m":>20}'
+      f'{"rmse/m":>20.6}{"gross_error_rate/%":>20}')
 methods = ["liv1", "liv2", 'idw']
 for method, fn in zip(methods, sys.argv[2:]):
-    [rmse, min_, max_, mean_] = accuracy(sys.argv[1], fn)
-    print(f'{method:<10}{rmse:>20.6}{min_:>20.6}{max_:>20.6}{mean_:>20.6}')
+    diff = diff_list(sys.argv[1], fn)
+    diff = np.array(diff)
+    min_ = diff.min()
+    max_ = diff.max()
+    mean = diff.mean()
+    rmse = math.sqrt(sum(diff**2) / diff.size)
+    gross_error_rate = sum(abs(diff) > 3 * rmse) / diff.size
+    print(f'{method:<10}{min_:>10.6}{max_:>20.6}{mean:>20.6}'
+          f'{rmse:>20.6}{gross_error_rate*100:>20.6}')

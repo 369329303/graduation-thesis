@@ -1,0 +1,3 @@
+Time for liv1 method:	0.06945991516       s.
+Time for liv2 method:	11.79073286         s.
+Time for idw  method:	11.8953619          s.
