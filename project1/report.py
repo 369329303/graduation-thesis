@@ -1,8 +1,8 @@
 import subprocess
 
-radius_a = [i for i in range(10, 31, 11)]
+radius_a = [i for i in range(32, 41, 2)]
 
-report = open('report.txt', 'w')
+report = open('report.txt', 'a')
 print(f'{"Method":<10}{"Time/s":>10}'
       f'{"min/m":>10}{"max/m":>10}{"mean/m":>12}'
       f'{"rmse/m":>10}{"error/%":>10}')
@@ -20,8 +20,8 @@ for radius in radius_a:
                    stdout=subprocess.DEVNULL)
     with open('tmpfile1.txt', 'r') as f1, \
             open('tmpfile2.txt', 'r') as f2:
-        print(f'----radius: {radius} m')
-        report.write(f'----radius: {radius} m\n')
+        print(f'----Radius: {radius} m')
+        report.write(f'----Radius: {radius} m\n')
         for line1, line2 in zip(f1, f2):
             if line1.startswith('Method'):
                 continue

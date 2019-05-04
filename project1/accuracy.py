@@ -27,7 +27,7 @@ print(f'{"Method":<10}{"min/m":>10}{"max/m":>10}{"mean/m":>12}'
       f'{"rmse/m":>10}{"error/%":>10}')
 tmpfile2.write(f'{"Method":<10}{"min/m":>10}{"max/m":>10}{"mean/m":>12}'
                f'{"rmse/m":>10}{"error/%":>10}\n')
-methods = ["liv1", "liv2", 'idw', 'idwv2', 'nn']
+methods = ["LIv1", "LIv2", 'IDWv1', 'IDWv2', 'NN']
 for method, fn in zip(methods, sys.argv[2:]):
     diff = diff_list(sys.argv[1], fn)
     diff = np.array(diff)

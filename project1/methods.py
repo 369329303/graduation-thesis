@@ -24,14 +24,14 @@ def within_range(tree, i, radius):
 
 
 # calculate z value using linear interpolation version 1 method
-def liv1(i):
+def LIv1(i):
     previous = contents[i - 1]
     next_ = contents[i + 1] if i + 1 < len(contents) else previous
     return (previous[2] + next_[2]) / 2
 
 
 # calculate z value using linear interpolation version 2 method
-def liv2(i, radius):
+def LIv2(i, radius):
     in_range = within_range(tree, i, radius)
     sum_z = 0
     for record in in_range:
@@ -41,8 +41,8 @@ def liv2(i, radius):
         else contents[i - 1][2]
 
 
-# calculate z value using idw method
-def idw(i, radius):
+# calculate z value using IDWv1 method
+def IDWv1(i, radius):
     in_range = within_range(tree, i, radius)
     m, n = 0, 0
     for i in range(len(in_range)):
@@ -51,13 +51,13 @@ def idw(i, radius):
     return n / m if m != 0 else contents[i - 1][2]
 
 
-def idwv2(i, k=2):
+def IDWv2(i, k=2):
     '''
     Find k points that nearest point i.
     Then use IDW method to interpolate.
     Return predicated z value of point i.
     '''
-    res = nn(i, k)
+    res = NN(i, k)
     m, n = 0, 0
     for j in res:
         m += 1 / distance(i, 2*j)
@@ -65,7 +65,7 @@ def idwv2(i, k=2):
     return n / m if m != 0 else contents[i - 1][2]
 
 
-def nn(i, k=1):
+def NN(i, k=1):
     '''
     Nearest Neighbor for interpolation.
     Return the index of nearest neighbor in the tree.
@@ -99,77 +99,75 @@ print(f'{"Method":<10}{"Time/s":>10}')
 tmpfile1.write(f'{"Method":<10}{"Time/s":>10}\n')
 
 start = time.time()
+extracted_contents_array = np.array(extracted_contents)
+tree = spatial.KDTree(extracted_contents_array[:, 0:2])
+t0 = time.time() - start
+
+start = time.time()
 with open('f1.txt', 'w') as f1:
     for i in range(len(contents)):
         if i % 2:
             cur = contents[i]
-            z = liv1(i)
+            z = LIv1(i)
             f1.write(f'{cur[0]}\t{cur[1]}\t{z}\n')
         else:
             f1.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
-print(f'{"liv1":<10}{end-start:>10.2f}')
-tmpfile1.write(f'{"liv1":<10}{end-start:>10.2f}\n')
+print(f'{"LIv1":<10}{end-start:>10.2f}')
+tmpfile1.write(f'{"LIv1":<10}{end-start:>10.2f}\n')
 
 start = time.time()
 with open('f2.txt', 'w') as f2:
-    extracted_contents_array = np.array(extracted_contents)
-    tree = spatial.KDTree(extracted_contents_array[:, 0:2])
     for i in range(len(contents)):
         if i % 2:
             cur = contents[i]
-            z = liv2(i, radius)
+            z = LIv2(i, radius)
             f2.write(f'{cur[0]}\t{cur[1]}\t{z}\n')
         else:
             f2.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
-print(f'{"liv2":<10}{end-start:>10.2f}')
-tmpfile1.write(f'{"liv2":<10}{end-start:>10.2f}\n')
+print(f'{"LIv2":<10}{end-start+t0:>10.2f}')
+tmpfile1.write(f'{"LIv2":<10}{end-start+t0:>10.2f}\n')
 
 start = time.time()
 with open('f3.txt', 'w') as f3:
-    extracted_contents_array = np.array(extracted_contents)
-    tree = spatial.KDTree(extracted_contents_array[:, 0:2])
     for i in range(len(contents)):
         if i % 2:
             cur = contents[i]
-            z = idw(i, radius)
+            z = IDWv1(i, radius)
             f3.write(f'{cur[0]}\t{cur[1]}\t{z}\n')
         else:
             f3.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
-print(f'{"idw":<10}{end-start:>10.2f}')
-tmpfile1.write(f'{"idw":<10}{end-start:>10.2f}\n')
+print(f'{"IDWv1":<10}{end-start+t0:>10.2f}')
+tmpfile1.write(f'{"IDWv1":<10}{end-start+t0:>10.2f}\n')
 
 start = time.time()
 with open('f4.txt', 'w') as f4:
-    extracted_contents_array = np.array(extracted_contents)
-    tree = spatial.KDTree(extracted_contents_array[:, 0:2])
+    k = 3  # 3 neighbors
     for i in range(len(contents)):
         if i % 2:
             cur = contents[i]
-            z = idwv2(i, 3)
+            z = IDWv2(i, k)
             f4.write(f'{cur[0]}\t{cur[1]}\t{z}\n')
         else:
             f4.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
-print(f'{"idwv2":<10}{end-start:>10.2f}')
-tmpfile1.write(f'{"idwv2":<10}{end-start:>10.2f}\n')
+print(f'{"IDWv2":<10}{end-start+t0:>10.2f}')
+tmpfile1.write(f'{"IDWv2":<10}{end-start+t0:>10.2f}\n')
 
 start = time.time()
 with open('f5.txt', 'w') as f5:
-    extracted_contents_array = np.array(extracted_contents)
-    tree = spatial.KDTree(extracted_contents_array[:, 0:2])
     for i in range(len(contents)):
         if i % 2:
             cur = contents[i]
-            index = nn(i) * 2
+            index = NN(i) * 2
             z = contents[index][2]
             f5.write(f'{cur[0]}\t{cur[1]}\t{z}\n')
         else:
             f5.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
-print(f'{"nn":<10}{end-start:>10.2f}')
-tmpfile1.write(f'{"nn":<10}{end-start:>10.2f}\n')
+print(f'{"NN":<10}{end-start+t0:>10.2f}')
+tmpfile1.write(f'{"NN":<10}{end-start+t0:>10.2f}\n')
 
 tmpfile1.close()
