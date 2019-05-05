@@ -7,10 +7,11 @@ from scipy import spatial
 
 def distance(i, j):
     '''
-    Return the distance of point i & j.
+    Return the distance of point i &  j.
     '''
-    return math.sqrt(pow(contents[i][0]-contents[j][0], 2) +
-                     pow(contents[i][1]-contents[j][1], 2))
+    return math.sqrt(
+        pow(contents[i][0] - contents[j][0], 2) +
+        pow(contents[i][1] - contents[j][1], 2))
 
 
 def within_range(tree, i, radius):
@@ -18,10 +19,9 @@ def within_range(tree, i, radius):
     Return all the points that lie in the circle of point i, with R=radius.
     '''
     in_range = list()
-    res = tree.query_ball_point([contents[i][0], contents[i][1]],
-                                radius)
+    res = tree.query_ball_point([contents[i][0], contents[i][1]], radius)
     for j in res:
-        d = distance(i, 2*j)
+        d = distance(i, 2 * j)
         z = extracted_contents[j][2]
         in_range.append([j, d, z])
     return in_range
@@ -70,8 +70,8 @@ def IDWv2(i, k=2):
     res = NN(i, k)
     m, n = 0, 0
     for j in res:
-        m += 1 / distance(i, 2*j)
-        n += contents[2*j][2] / distance(i, 2*j)
+        m += 1 / distance(i, 2 * j)
+        n += contents[2 * j][2] / distance(i, 2 * j)
     return n / m if m != 0 else contents[i - 1][2]
 
 
@@ -90,22 +90,18 @@ if len(sys.argv) != 3:
     print(f'Usage: {sys.argv[0]} <radius> <data.txt>')
     sys.exit(1)
 
-tmpfile1 = open('tmpfile1.txt', 'w')
 radius = float(sys.argv[1])
 contents, extracted_contents = list(), list()
 flag = True
 with open(sys.argv[2], 'r') as f:
     for line in f:
         sline = line.split()
-        contents.append([float(sline[0]),
-                         float(sline[1]),
-                         float(sline[2])])
+        contents.append([float(sline[0]), float(sline[1]), float(sline[2])])
         if flag:
             extracted_contents.append(contents[-1])
         flag = not flag  # Switch between True and False
-        
+
 print(f'{"Method":<10}{"Time/s":>10}')
-tmpfile1.write(f'{"Method":<10}{"Time/s":>10}\n')
 
 # Store the time used to create KD tree.
 start = time.time()
@@ -125,7 +121,6 @@ with open('f1.txt', 'w') as f1:
             f1.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
 print(f'{"LIv1":<10}{end-start:>10.2f}')
-tmpfile1.write(f'{"LIv1":<10}{end-start:>10.2f}\n')
 
 # LIv2 method
 start = time.time()
@@ -139,7 +134,6 @@ with open('f2.txt', 'w') as f2:
             f2.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
 print(f'{"LIv2":<10}{end-start+t0:>10.2f}')
-tmpfile1.write(f'{"LIv2":<10}{end-start+t0:>10.2f}\n')
 
 # IDWv1 method
 start = time.time()
@@ -153,7 +147,6 @@ with open('f3.txt', 'w') as f3:
             f3.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
 print(f'{"IDWv1":<10}{end-start+t0:>10.2f}')
-tmpfile1.write(f'{"IDWv1":<10}{end-start+t0:>10.2f}\n')
 
 # IDWv2 method
 start = time.time()
@@ -168,8 +161,6 @@ with open('f4.txt', 'w') as f4:
             f4.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
 print(f'{"IDWv2":<10}{end-start+t0:>10.2f}')
-tmpfile1.write(f'{"IDWv2":<10}{end-start+t0:>10.2f}\n')
-
 
 # NN method
 start = time.time()
@@ -184,6 +175,3 @@ with open('f5.txt', 'w') as f5:
             f5.write('\t'.join(map(str, contents[i])) + '\n')
 end = time.time()
 print(f'{"NN":<10}{end-start+t0:>10.2f}')
-tmpfile1.write(f'{"NN":<10}{end-start+t0:>10.2f}\n')
-
-tmpfile1.close()

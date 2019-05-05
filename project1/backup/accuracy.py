@@ -3,7 +3,7 @@ import math
 import numpy as np
 
 
-def diff_a(file1, file2):
+def diff_s(file1, file2):
     '''
     Return [(z2-z1), ...] for z1 in file1, z2 in file2.
     '''
@@ -24,19 +24,16 @@ def diff_a(file1, file2):
 if len(sys.argv) < 3:
     print(f'Usage: {sys.argv[0]} <data1.txt> <data2.txt> ...')
     sys.exit(1)
-files = sys.argv[2:]
 
-tmpfile2 = open('tmpfile2.txt', 'w')
+files = sys.argv[2:]
 
 print(f'{"Method":<10}{"min/m":>10}'
       f'{"max/m":>10}{"mean/m":>12}'
       f'{"rmse/m":>10}{"error/%":>10}')
-tmpfile2.write(f'{"Method":<10}{"min/m":>10}'
-               f'{"max/m":>10}{"mean/m":>12}'
-               f'{"rmse/m":>10}{"error/%":>10}\n')
+
 methods = ["LIv1", "LIv2", 'IDWv1', 'IDWv2', 'NN']
 for method, fn in zip(methods, files):
-    diff_a = np.array(diff_a(sys.argv[1], fn))
+    diff_a = np.array(diff_s(sys.argv[1], fn))
     min_ = diff_a.min()
     max_ = diff_a.max()
     mean = diff_a.mean()
@@ -45,8 +42,3 @@ for method, fn in zip(methods, files):
     print(f'{method:<10}{min_:>10.2f}'
           f'{max_:>10.2f}{mean:>12.6f}'
           f'{rmse:>10.2f}{error:>10.2f}')
-    tmpfile2.write(f'{method:<10}{min_:>10.2f}'
-                   f'{max_:>10.2f}{mean:>12.6f}'
-                   f'{rmse:>10.2f}{error:>10.2f}\n')
-
-tmpfile2.close()
