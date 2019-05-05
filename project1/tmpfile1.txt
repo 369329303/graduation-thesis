@@ -1,6 +1,6 @@
 Method        Time/s
-LIv1            0.06
-LIv2           16.78
-IDWv1          17.15
-IDWv2           2.58
-NN              1.91
+LIv1            0.00
+LIv2            0.00
+IDWv1           0.00
+IDWv2           0.00
+NN              0.00

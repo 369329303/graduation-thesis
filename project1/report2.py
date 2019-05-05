@@ -1,17 +1,14 @@
 import subprocess
 
-# radius list
-radius_a = [i for i in range(32, 41, 2)]
+neighbors_a = [i for i in range(10)]
 
 report = open('report.txt', 'a')
-
 print(f'{"Method":<10}{"Time/s":>10}'
       f'{"min/m":>10}{"max/m":>10}{"mean/m":>12}'
       f'{"rmse/m":>10}{"error/%":>10}')
 report.write(f'{"Method":<10}{"Time/s":>10}'
              f'{"min/m":>10}{"max/m":>10}{"mean/m":>12}'
              f'{"rmse/m":>10}{"error/%":>10}\n')
-
 for radius in radius_a:
     # This statement will produce tmpfile1.txt
     subprocess.run(['python3', 'methods.py', str(radius), 'source.txt'],
