@@ -8,3 +8,9 @@
 5、最近邻法：找出最近的点，用该点的高程值来作为内插点的高程值。   
   
 主要针对的是散点数据的处理。比如GPS点数据。  
+
+程序使用方法：  
+` $ python3 report.py source.txt `  
+` $ python3 charts.py `  
+  
+备注：其中距离参数需要在report.py文件中输入。  
