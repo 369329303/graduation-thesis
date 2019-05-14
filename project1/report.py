@@ -8,9 +8,9 @@ if len(sys.argv) != 2:
 
 src_file = sys.argv[1]
 #  radius list
-radius_a = [i for i in range(42, 51, 2)]
+radius_a = [i for i in range(10, 31, 2)]
 
-report = open('report.txt', 'a')
+report = open('report.txt', 'w')
 
 print(f'{"Method":<10}{"Time/s":>10}'
       f'{"min/m":>10}{"max/m":>10}{"mean/m":>12}'
