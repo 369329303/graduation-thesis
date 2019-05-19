@@ -8,9 +8,9 @@ if len(sys.argv) != 2:
 
 src_file = sys.argv[1]
 #  radius list
-radius_a = [i for i in range(10, 31, 2)]
+radius_a = [i for i in range(10, 51, 5)]
 
-report = open('report.txt', 'w')
+report = open('report.txt', 'a')
 
 print(f'{"Method":<10}{"Time/s":>10}'
       f'{"min/m":>10}{"max/m":>10}{"mean/m":>12}'
@@ -20,13 +20,11 @@ report.write(f'{"Method":<10}{"Time/s":>10}'
              f'{"rmse/m":>10}{"error/%":>10}\n')
 
 for radius in radius_a:
-    # This statement will produce tmpfile1.txt
     res1 = subprocess.run(['python3', 'methods.py', str(radius), src_file],
                           stdout=subprocess.PIPE, text=True)
-    # This statement will produce tmpfile2.txt
-    res2 = subprocess.run(['python3', 'accuracy.py',
-                           src_file, 'f1.txt', 'f2.txt',
-                           'f3.txt', 'f4.txt', 'f5.txt'],
+    res2 = subprocess.run(['python3', 'accuracy.py', src_file,
+                           'f1.txt', 'f2.txt', 'f3.txt',
+                           'f4.txt', 'f5.txt', 'f6.txt'],
                           stdout=subprocess.PIPE, text=True)
 
     print(f'----Radius: {radius} m')

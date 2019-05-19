@@ -20,7 +20,7 @@ def diff_s(file1, file2):
     return diff
 
 
-# Help Information
+# 帮助信息
 if len(sys.argv) < 3:
     print(f'Usage: {sys.argv[0]} <data1.txt> <data2.txt> ...')
     sys.exit(1)
@@ -31,7 +31,7 @@ print(f'{"Method":<10}{"min/m":>10}'
       f'{"max/m":>10}{"mean/m":>12}'
       f'{"rmse/m":>10}{"error/%":>10}')
 
-methods = ["LIv1", "LIv2", 'IDWv1', 'IDWv2', 'NN']
+methods = ['LI', 'IDW', 'NN', 'LR']
 for method, fn in zip(methods, files):
     diff_a = np.array(diff_s(sys.argv[1], fn))
     min_ = diff_a.min()

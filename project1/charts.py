@@ -6,6 +6,7 @@ LIv2_rmse_a, LIv2_error_a = list(), list()
 IDWv1_rmse_a, IDWv1_error_a = list(), list()
 IDWv2_rmse_a, IDWv2_error_a = list(), list()
 NN_rmse_a, NN_error_a = list(), list()
+LLR_rmse_a, LLR_error_a = list(), list()
 with open('report.txt', 'r') as f:
     for line in f:
         if line.startswith('----'):
@@ -25,8 +26,11 @@ with open('report.txt', 'r') as f:
         elif line.startswith('NN'):
             NN_rmse_a.append(float(line.split()[-2]))
             NN_error_a.append(float(line.split()[-1]))
+        elif line.startswith('LLR'):
+            LLR_rmse_a.append(float(line.split()[-2]))
+            LLR_error_a.append(float(line.split()[-1]))
 
-# Parameters for setting figure            
+# Parameters for setting figure
 params = {
     'axes.titlesize': 30,
     'axes.labelsize': 20,
@@ -44,6 +48,7 @@ plt.plot(radius_a, LIv2_rmse_a, 'b^-', label='LIv2')
 plt.plot(radius_a, IDWv1_rmse_a, 'rv-', label='IDWv1')
 plt.plot(radius_a, IDWv2_rmse_a, 'g>-', label='IDWv2')
 plt.plot(radius_a, NN_rmse_a, 'ys-', label='NN')
+plt.plot(radius_a, LLR_rmse_a, 'mp-', label='LLR')
 plt.title('Radius vs. RMSE')
 plt.xlabel('Radius/m')
 plt.ylabel('RMSE/m')
@@ -55,6 +60,7 @@ plt.plot(radius_a, LIv2_error_a, 'b^-', label='LIv2', markersize=10)
 plt.plot(radius_a, IDWv1_error_a, 'rv-', label='IDWv1', markersize=10)
 plt.plot(radius_a, IDWv2_error_a, 'g>-', label='IDWv2', markersize=10)
 plt.plot(radius_a, NN_error_a, 'ys-', label='NN')
+plt.plot(radius_a, LLR_error_a, 'mp-', label='LLR')
 plt.title('Radius vs. Error Rate')
 plt.xlabel('Radius/m')
 plt.ylabel('Error Rate/%')
