@@ -31,13 +31,13 @@ print(f'{"Method":<10}{"min/m":>10}'
       f'{"max/m":>10}{"mean/m":>12}'
       f'{"rmse/m":>10}{"error/%":>10}')
 
-methods = ['LI', 'IDW', 'NN', 'LR']
+methods = ['NN', 'LI', 'IDW', 'LR']
 for method, fn in zip(methods, files):
     diff_a = np.array(diff_s(sys.argv[1], fn))
     min_ = diff_a.min()
     max_ = diff_a.max()
     mean = diff_a.mean()
-    rmse = math.sqrt(sum(diff_a**2) / diff_a.size)
+    rmse = diff_a.std()
     error = sum(abs(diff_a) > 3 * rmse) / diff_a.size * 100
     print(f'{method:<10}{min_:>10.2f}'
           f'{max_:>10.2f}{mean:>12.6f}'

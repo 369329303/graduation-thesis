@@ -1,69 +1,92 @@
 import matplotlib.pyplot as plt
 
-radius_a = list()
-LIv1_rmse_a, LIv1_error_a = list(), list()
-LIv2_rmse_a, LIv2_error_a = list(), list()
-IDWv1_rmse_a, IDWv1_error_a = list(), list()
-IDWv2_rmse_a, IDWv2_error_a = list(), list()
-NN_rmse_a, NN_error_a = list(), list()
-LLR_rmse_a, LLR_error_a = list(), list()
+rmse, error = dict(), dict()
+rmse2, error2 = dict(), dict()
+rmse3, error3 = dict(), dict()
+
 with open('report.txt', 'r') as f:
     for line in f:
-        if line.startswith('----'):
-            radius_a.append(float(line.split()[-2]))
-        elif line.startswith('LIv1'):
-            LIv1_rmse_a.append(float(line.split()[-2]))
-            LIv1_error_a.append(float(line.split()[-1]))
-        elif line.startswith('LIv2'):
-            LIv2_rmse_a.append(float(line.split()[-2]))
-            LIv2_error_a.append(float(line.split()[-1]))
-        elif line.startswith('IDWv1'):
-            IDWv1_rmse_a.append(float(line.split()[-2]))
-            IDWv1_error_a.append(float(line.split()[-1]))
-        elif line.startswith('IDWv2'):
-            IDWv2_rmse_a.append(float(line.split()[-2]))
-            IDWv2_error_a.append(float(line.split()[-1]))
-        elif line.startswith('NN'):
-            NN_rmse_a.append(float(line.split()[-2]))
-            NN_error_a.append(float(line.split()[-1]))
-        elif line.startswith('LLR'):
-            LLR_rmse_a.append(float(line.split()[-2]))
-            LLR_error_a.append(float(line.split()[-1]))
+        if not line[0].isalpha():
+            continue
+        sline = line.split()
+        if sline[0] == 'LI':
+            rmse['LI'] = float(sline[-2])
+            error['LI'] = float(sline[-1])
+        elif sline[0] == 'IDW':
+            rmse['IDW'] = float(sline[-2])
+            error['IDW'] = float(sline[-1])
+        elif sline[0] == 'LR':
+            rmse['LR'] = float(sline[-2])
+            error['LR'] = float(sline[-1])
+
+        elif sline[0] == 'LI2':
+            rmse2['LI'] = float(sline[-2])
+            error2['LI'] = float(sline[-1])
+        elif sline[0] == 'IDW2':
+            rmse2['IDW'] = float(sline[-2])
+            error2['IDW'] = float(sline[-1])
+        elif sline[0] == 'LR2':
+            rmse2['LR'] = float(sline[-2])
+            error2['LR'] = float(sline[-1])
+
+        elif sline[0] == 'LI3':
+            rmse3['LI'] = float(sline[-2])
+            error3['LI'] = float(sline[-1])
+        elif sline[0] == 'IDW3':
+            rmse3['IDW'] = float(sline[-2])
+            error3['IDW'] = float(sline[-1])
+        elif sline[0] == 'LR3':
+            rmse3['LR'] = float(sline[-2])
+            error3['LR'] = float(sline[-1])
+
 
 # Parameters for setting figure
 params = {
     'axes.titlesize': 30,
     'axes.labelsize': 20,
-    'lines.linewidth': 1,
+    'lines.linewidth': 2,
     'lines.markersize': 10,
-    'xtick.labelsize': 16,
-    'ytick.labelsize': 16,
-    'legend.fontsize': 16
+    'xtick.labelsize': 20,
+    'ytick.labelsize': 20,
+    'legend.fontsize': 20
 }
 plt.rcParams.update(params)
 
 plt.subplot(121)
-plt.plot(radius_a, LIv1_rmse_a, 'ko-', label='LIv1')
-plt.plot(radius_a, LIv2_rmse_a, 'b^-', label='LIv2')
-plt.plot(radius_a, IDWv1_rmse_a, 'rv-', label='IDWv1')
-plt.plot(radius_a, IDWv2_rmse_a, 'g>-', label='IDWv2')
-plt.plot(radius_a, NN_rmse_a, 'ys-', label='NN')
-plt.plot(radius_a, LLR_rmse_a, 'mp-', label='LLR')
-plt.title('Radius vs. RMSE')
-plt.xlabel('Radius/m')
-plt.ylabel('RMSE/m')
+names = list(rmse3.keys())
+values = list(rmse3.values())
+plt.plot(names, values, '-s', label='Fixed radius')
+
+names = list(rmse2.keys())
+values = list(rmse2.values())
+plt.plot(names, values, '-^', label='Fixed points')
+
+names = list(rmse.keys())
+values = list(rmse.values())
+plt.plot(names, values, '-o', label='Adaptive method')
+
 plt.legend()
+plt.title('RMSE')
+plt.xlabel('Methods')
+plt.ylabel('RMSE/m')
+
 
 plt.subplot(122)
-plt.plot(radius_a, LIv1_error_a, 'ko-', label='LIv1')
-plt.plot(radius_a, LIv2_error_a, 'b^-', label='LIv2', markersize=10)
-plt.plot(radius_a, IDWv1_error_a, 'rv-', label='IDWv1', markersize=10)
-plt.plot(radius_a, IDWv2_error_a, 'g>-', label='IDWv2', markersize=10)
-plt.plot(radius_a, NN_error_a, 'ys-', label='NN')
-plt.plot(radius_a, LLR_error_a, 'mp-', label='LLR')
-plt.title('Radius vs. Error Rate')
-plt.xlabel('Radius/m')
-plt.ylabel('Error Rate/%')
-plt.legend()
+names = list(error3.keys())
+values = list(error3.values())
+plt.plot(names, values, '-s', label='Fixed radius')
 
+names = list(error2.keys())
+values = list(error2.values())
+plt.plot(names, values, '-^', label='Fixed points')
+
+names = list(error.keys())
+values = list(error.values())
+plt.plot(names, values, '-o', label='Adaptive method')
+
+
+plt.legend()
+plt.title('Gross Error Rate')
+plt.xlabel('Methods')
+plt.ylabel('Gross Error Rate/%')
 plt.show()

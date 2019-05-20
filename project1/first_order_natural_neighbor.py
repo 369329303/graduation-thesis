@@ -27,6 +27,7 @@ def is_inMBR(p, MBR):
     else:
         return False
 
+
 def first_order_natural_neighbor(contents, extracted_contents_a,
                                  tree, i, neighbors):
     '''
