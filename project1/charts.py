@@ -1,4 +1,9 @@
+#!python3
+# 图表显示
 import matplotlib.pyplot as plt
+
+plt.rcParams['font.sans-serif'] = ['SimHei']
+plt.rcParams['axes.unicode_minus'] = False
 
 rmse, error = dict(), dict()
 rmse2, error2 = dict(), dict()
@@ -66,7 +71,7 @@ values = list(rmse.values())
 plt.plot(names, values, '-o', label='Adaptive method')
 
 plt.legend()
-plt.title('RMSE')
+plt.title('均方根误差')
 plt.xlabel('Methods')
 plt.ylabel('RMSE/m')
 

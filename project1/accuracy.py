@@ -1,5 +1,6 @@
+#!python3
+# 插值精度计算，最小值、最大值、平均值和均方根误差
 import sys
-import math
 import numpy as np
 
 
@@ -31,7 +32,7 @@ print(f'{"Method":<10}{"min/m":>10}'
       f'{"max/m":>10}{"mean/m":>12}'
       f'{"rmse/m":>10}{"error/%":>10}')
 
-methods = ['NN', 'LI', 'IDW', 'LR']
+methods = ['LI', 'IDW', 'LR']
 for method, fn in zip(methods, files):
     diff_a = np.array(diff_s(sys.argv[1], fn))
     min_ = diff_a.min()

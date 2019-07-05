@@ -1,3 +1,6 @@
+#!python3
+# 半径固定的搜索策略，插值方法LI, IDW, LR
+
 import sys
 import math
 import time
@@ -8,7 +11,7 @@ from sklearn.linear_model import LinearRegression
 
 def distance(i, j):
     '''
-    Return the distance of point i & j.
+    返回点i, j的水平距离
     '''
     return math.sqrt(pow(contents[i][0]-contents[j][0], 2) +
                      pow(contents[i][1]-contents[j][1], 2))
@@ -16,7 +19,7 @@ def distance(i, j):
 
 def within_range(i):
     '''
-    Return all the points that lie in the circle of point i, with R=radius.
+    返回所有点i周围一定范围内的点
     '''
     in_range = list()
     res = tree.query_ball_point([contents[i][0], contents[i][1]],
@@ -57,8 +60,8 @@ def IDW(i):
 
 def LR(i):
     '''
-    Return predicated z value of point i.
-    Local Linear Regression method.
+    Linear Regression.
+    使用线性回归法计算未知点的高程值
     '''
     in_range = within_range(i)
     if len(in_range) == 0:
@@ -96,8 +99,8 @@ extracted_contents_a = np.array(extracted_contents)
 tree = spatial.KDTree(extracted_contents_a[:, 0:2])
 t0 = time.time() - start
 
-# 查找一阶自然邻近点时，查找半径
-radius = 30
+# 半径固定
+radius = 50
 for j in range(8, 11):
     start = time.time()
     with open('f' + str(j) + '.txt', 'w') as f:

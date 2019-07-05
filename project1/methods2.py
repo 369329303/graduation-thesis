@@ -1,5 +1,7 @@
+#!python3
+# 参考点数固定搜索策略，插值方法LI, IDW, LR
+
 import sys
-import math
 import time
 import numpy as np
 from scipy import spatial
@@ -31,8 +33,8 @@ def IDW(i):
 
 def LR(i):
     '''
-    Return predicated z value of point i.
-    Local Linear Regression method.
+    Linear Regression
+    使用线性回归法计算未知点的高程值
     '''
     res = tree.query([contents[i][0], contents[i][1]], k)
     points = list()
@@ -45,7 +47,7 @@ def LR(i):
     return pdt[0]
 
 
-# Help information
+# 帮助信息
 if len(sys.argv) != 2:
     print(f'Usage: {sys.argv[0]} <data.txt>')
     sys.exit(1)
@@ -62,13 +64,13 @@ with open(sys.argv[1], 'r') as f:
 
 print(f'{"Method":<10}{"Time/s":>10}')
 
-# Store the time used to create KD tree which based on extracted_contents_array
+# 存储建立KD树所用的时间，数据集是extracted_contents_a。
 start = time.time()
 extracted_contents_a = np.array(extracted_contents)
 tree = spatial.KDTree(extracted_contents_a[:, 0:2])
 t0 = time.time() - start
 
-# 查找一阶自然邻近点时，未知点邻居的数目
+# 未知点邻居的数目
 k = 8
 for j in range(5, 8):
     start = time.time()

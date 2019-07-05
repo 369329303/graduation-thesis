@@ -1,4 +1,4 @@
-A = importdata('sample.txt');
+A = importdata('source.txt');
 x = A(:,1);
 y = A(:,2);
 z = A(:,3);

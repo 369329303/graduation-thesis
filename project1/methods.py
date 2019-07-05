@@ -1,3 +1,5 @@
+#!python3
+# 自定义搜索策略，插值方法LI, IDW, LR
 import sys
 import time
 import numpy as np
@@ -26,17 +28,15 @@ def distance_square(pA, pB):
 
 def fun(i):
     point_loc = [contents[i][0], contents[i][1], 0]
-    # 判断未知点是否位于Delaunay三角网内部
-    if not is_inMBR(point_loc, MBR):  # 否，不需要在判断，直接用最近邻点代替
-        res = tree.query(point_loc[0:2])
-        return [extracted_contents_a[res[1]]]  # 返回最近邻点的x,y,z坐标数据
+    # 判断未知点是否位于Delaunay三角网的最小外接矩形内部
+    if not is_inMBR(point_loc, MBR):  # 否，不需要在判断，直接用相邻点代替
+        return [contents[i-1]]
 
     # 如果未知点位于Delaunay三角网的MBR内部，则计算未知点位于哪个小格网内
     i = int((point_loc[1] - MBR_down) // width)
     j = int((point_loc[0] - MBR_left) // width)
-    if len(set_groups[i][j]) == 0:  # 如果格网不与任何三角形有关系，则用最近邻点代替
-        res = tree.query(point_loc[0:2])
-        return [extracted_contents_a[res[1]]]  # 返回最近邻点的x,y,z坐标数据
+    if len(set_groups[i][j]) == 0:  # 如果格网不与任何三角形有关系，则用相邻点代替
+        return [contents[i-1]]
 
     # 获取未知点的相关邻居点
     neighbors_a = extracted_contents_a[np.array(list(set_groups[i][j]))]
@@ -159,22 +159,19 @@ for t in tri.simplices:
         for j in range(A, B):
             set_groups[i][j].update(t)
 
-for j in range(4):
+for j in range(2, 5):
     start = time.time()
-    with open('f' + str(j + 1) + '.txt', 'w') as f:
+    with open('f' + str(j) + '.txt', 'w') as f:
         for i in range(len(contents)):
             if i % 2:
                 cur = contents[i]
-                if j == 0:
-                    z = NN(i)
-                    m_name = 'NN'
-                elif j == 1:
+                if j == 2:
                     z = LI(i)
                     m_name = 'LI'
-                elif j == 2:
+                elif j == 3:
                     z = IDW(i)
                     m_name = 'IDW'
-                else:
+                elif j == 4:
                     z = LR(i)
                     m_name = 'LR'
                 f.write(f'{cur[0]}\t{cur[1]}\t{z}\n')

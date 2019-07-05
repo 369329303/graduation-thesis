@@ -36,5 +36,5 @@ plt.title('Error Rate vs. neighbors')
 plt.xlabel('neighbors/count')
 plt.ylabel('Error Rate/%')
 plt.legend()
-
+plt.axhline(0, color='black', lw=2)
 plt.show()
